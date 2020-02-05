@@ -10,5 +10,9 @@
         "http": true,
         "request": true,
         "environment": true
+    },
+    "gui": {
+        "enable": true,
+        "route": "/dashboard"
     }
 }

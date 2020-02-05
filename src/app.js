@@ -2,9 +2,14 @@ const http = require('http')
   , express = require('express')
   , app = express()
   , server = http.createServer(app)
-  , bodyParser = require('body-parser');
+  , bodyParser = require('body-parser')
+  , path = require('path')
+  , config = require('./nconf');
 
 // Configuration
+if (config.get('gui:enable')) {
+  app.use(config.get('gui:route'), express.static(path.join(__dirname, 'public')));
+}
 app.disable('x-powered-by');
 
 // Parser

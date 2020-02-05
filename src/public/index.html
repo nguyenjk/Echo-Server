@@ -1,0 +1,115 @@
+<html>
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Echo-Server : Dashboard</title>
+  <link rel="shortcut icon" type="image/png" href="favicon.png" />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700,400italic|Material+Icons">
+  <link rel="stylesheet" href="https://unpkg.com/vue-material/dist/vue-material.min.css">
+  <link rel="stylesheet" href="https://unpkg.com/vue-material/dist/theme/default.css">
+</head>
+
+<body>
+  <div id="app">
+    <div class="page-container">
+      <md-app md-waterfall md-mode="fixed-last">
+
+        <md-app-toolbar class="md-large md-dense md-primary">
+          <div class="md-toolbar-row">
+            <div class="md-toolbar-section-start">
+              <span class="md-title">Echo-Server</span>
+            </div>
+
+            <div class="md-toolbar-section-end">
+              <md-button>GitHub</md-button>
+              <md-button>DockerHub</md-button>
+              <md-button>HelmHub</md-button>
+            </div>
+          </div>
+
+          <div class="md-toolbar-row">
+            <md-tabs class="md-primary" md-alignment="centered">
+              <md-tab id="tab-home" md-label="Home" @click="activeTab='tab-home'"></md-tab>
+              <md-tab id="tab-history" md-label="History" @click="activeTab='tab-history'"></md-tab>
+            </md-tabs>
+          </div>
+        </md-app-toolbar>
+
+        <!-- HOME -->
+        <md-app-content v-if="activeTab == 'tab-home'">
+          <md-card>
+            <md-card-header>
+              <div class="md-title">Try It !</div>
+            </md-card-header>
+      
+            <md-card-content>
+              <md-field>
+                <label for="verb">Verb</label>
+                <md-select v-model="form.verb" id="verb" required>
+                  <md-option value="GET">GET</md-option>
+                  <md-option value="POST">POST</md-option>
+                  <md-option value="PUT">PUT</md-option>
+                  <md-option value="PATCH">PATCH</md-option>
+                  <md-option value="DELETE">DELETE</md-option>
+                  <md-option value="HEAD">HEAD</md-option>
+                </md-select>
+              </md-field>
+              <md-field>
+                <label for="url">Url</label>
+                <span class="md-prefix">http(s)://------.--</span>
+                <md-input id="url" v-model="form.url" required />
+              </md-field>
+            </md-card-content>
+
+          </md-card>
+
+          <!-- RENDER FORM -->
+          <md-card>
+            <md-card-header>
+              <div class="md-title">Curl</div>
+            </md-card-header>
+      
+            <md-card-content>
+              <code>
+                curl -I -X {{ form.verb }} {{ form.url }}
+              </code>
+            </md-card-content>
+
+          </md-card>
+        </md-app-content>
+
+        <!-- HISTORY -->
+        <md-app-content v-if="activeTab == 'tab-history'">
+          <p>Ouiiii</p>
+        </md-app-content>
+      </md-app>
+    </div>
+  </div>
+
+  <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+  <script src="https://unpkg.com/vue"></script>
+  <script src="https://unpkg.com/vue-material"></script>
+  <script>
+    Vue.use(VueMaterial.default)
+
+    new Vue({
+      el: '#app',
+      data: {
+        activeTab: 'tab-home',
+        form: {
+          verb: 'GET',
+          url: '/'
+        }
+      }
+    })
+  </script>
+  <style>
+    .md-content {
+      margin-top: 20px;
+    }
+  </style>
+</body>
+
+</html>

@@ -9,6 +9,7 @@ RUN npm run build
 FROM mhart/alpine-node:slim-6
 WORKDIR /app
 COPY ./src/global.json .
+COPY ./src/public ./public
 COPY --from=build /build/dist/webserver.js .
 
 ENTRYPOINT [ "node", "webserver" ]
