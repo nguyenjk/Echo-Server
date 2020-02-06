@@ -9,6 +9,7 @@
   <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700,400italic|Material+Icons">
   <link rel="stylesheet" href="https://unpkg.com/vue-material/dist/vue-material.min.css">
   <link rel="stylesheet" href="https://unpkg.com/vue-material/dist/theme/default.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.1/styles/default.min.css">
 </head>
 
 <body>
@@ -39,45 +40,52 @@
 
         <!-- HOME -->
         <md-app-content v-if="activeTab == 'tab-home'">
-          <md-card>
-            <md-card-header>
-              <div class="md-title">Try It !</div>
-            </md-card-header>
-      
-            <md-card-content>
-              <md-field>
-                <label for="verb">Verb</label>
-                <md-select v-model="form.verb" id="verb" required>
-                  <md-option value="GET">GET</md-option>
-                  <md-option value="POST">POST</md-option>
-                  <md-option value="PUT">PUT</md-option>
-                  <md-option value="PATCH">PATCH</md-option>
-                  <md-option value="DELETE">DELETE</md-option>
-                  <md-option value="HEAD">HEAD</md-option>
-                </md-select>
-              </md-field>
-              <md-field>
-                <label for="url">Url</label>
-                <span class="md-prefix">http(s)://------.--</span>
-                <md-input id="url" v-model="form.url" required />
-              </md-field>
-            </md-card-content>
+          <!-- FORM -->
+          <div class="md-layout">
+            <div class="md-layout-item">
+              <md-card>
+                <md-card-header>
+                  <div class="md-title">Try It !</div>
+                </md-card-header>
+                <md-card-content>
+                  <md-field>
+                    <label for="verb">Verb</label>
+                    <md-select v-model="form.verb" id="verb" required>
+                      <md-option value="GET">GET</md-option>
+                      <md-option value="POST">POST</md-option>
+                      <md-option value="PUT">PUT</md-option>
+                      <md-option value="PATCH">PATCH</md-option>
+                      <md-option value="DELETE">DELETE</md-option>
+                      <md-option value="HEAD">HEAD</md-option>
+                    </md-select>
+                  </md-field>
+                  <md-field>
+                    <label for="url">Url</label>
+                    <span class="md-prefix">{{ host }}</span>
+                    <md-input id="url" v-model="form.url" required />
+                  </md-field>
+                  <md-button class="md-primary" @click="run">RUN</md-button>
+                </md-card-content>
+              </md-card>
+            </div>
 
-          </md-card>
+            <!-- RENDER FORM -->
+            <div class="md-layout-item" id="render">
+              <md-card>
+                <md-card-header>
+                  <div class="md-title">Curl</div>
+                </md-card-header>
 
-          <!-- RENDER FORM -->
-          <md-card>
-            <md-card-header>
-              <div class="md-title">Curl</div>
-            </md-card-header>
-      
-            <md-card-content>
-              <code>
-                curl -I -X {{ form.verb }} {{ form.url }}
-              </code>
-            </md-card-content>
+                <md-card-content>
+                  <h3>Command</h3>
+                  <p v-html="curl"></p>
 
-          </md-card>
+                  <h3>Result</h3>
+                  <p v-html="curlResult"></p>
+                </md-card-content>
+              </md-card>
+            </div>
+          </div>
         </md-app-content>
 
         <!-- HISTORY -->
@@ -91,16 +99,52 @@
   <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
   <script src="https://unpkg.com/vue"></script>
   <script src="https://unpkg.com/vue-material"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.1/highlight.min.js"></script>
+  <script>hljs.initHighlightingOnLoad(); </script>
   <script>
     Vue.use(VueMaterial.default)
 
-    new Vue({
+    var self = new Vue({
       el: '#app',
       data: {
         activeTab: 'tab-home',
         form: {
           verb: 'GET',
           url: '/'
+        },
+        formResult: {}
+      },
+      methods: {
+        highlight: function () {
+          document.querySelectorAll('pre code').forEach((block) => {
+            hljs.highlightBlock(block);
+          });
+        },
+        run: function () {
+          axios.get(`${this.host}:3000`)
+            .then(function (result){
+              self.formResult = result;
+            })
+            .catch(function (exception){
+              console.log(exception);
+            });
+        }
+      },
+      computed: {
+        host: function () {
+          var slashes = location.protocol.concat("//");
+          return slashes.concat(window.location.hostname);
+        },
+        curl: function () {
+          setTimeout(this.highlight, 100);
+          return `<pre><code class="bash">curl -I -X ${this.form.verb} ${this.host}${this.form.url}</code></pre>`;
+        },
+        curlResult: function () {
+          setTimeout(this.highlight, 100);
+          var result = JSON.stringify(this.formResult.data, null, '\t');
+          return `
+            <p>${this.formResult.status} - ${this.formResult.statusText}</p>
+            <pre><code class="json">${result}</code></pre>`;
         }
       }
     })
