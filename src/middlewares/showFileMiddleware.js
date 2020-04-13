@@ -13,6 +13,7 @@ const returnFile = (path, res) => {
       );
     }
   } catch (ex) {
+    apm.captureError(ex);
     res.status(404).send({
       error: "File or Directory not found"
     });

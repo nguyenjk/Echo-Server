@@ -27,7 +27,11 @@ You can use environments variables with `-e ENV_NAME=VALUE` or CLI arguments aft
 ```sh
 docker run -d \
     -p 3000:80 \
-    -e ENABLE__ENVIRONMENT=false
+    -e ENABLE__ENVIRONMENT=false 
+    -e ELASTIC_APM_SERVICE_NAME=$ELASTIC_APM_SERVICE_NAME
+    -e ELASTIC_APM_SECRET_TOKEN=$ELASTIC_APM_SECRET_TOKEN
+    -e ELASTIC_APM_SERVER_URL=$ELASTIC_APM_SERVER_URL
+    -e ELASTIC_APM_CAPTURE_BODY=$ELASTIC_APM_CAPTURE_BODY
     ealen/echo-server
 ```
 

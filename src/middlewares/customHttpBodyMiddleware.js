@@ -4,6 +4,7 @@ const returnBody = (value, res) => {
   try {
     res.json(JSON.parse(value));
   } catch (e) {
+    apm.captureError(e);
     res.json(value);
   }
 }

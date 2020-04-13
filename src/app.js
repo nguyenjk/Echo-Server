@@ -1,3 +1,5 @@
+var apm = require('elastic-apm-node').start();
+
 const http = require('http')
   , express = require('express')
   , app = express()
